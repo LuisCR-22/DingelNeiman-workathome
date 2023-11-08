@@ -1,5 +1,6 @@
 == downloaddata ==
 mkdir ../output
+
 download https://www.bls.gov/oes/special.requests/oesm18ma.zip
 download https://www.bls.gov/oes/special.requests/oesm18nat.zip
 download https://www.onetcenter.org/dl_files/database/db_24_2_text/Work%20Context.txt
