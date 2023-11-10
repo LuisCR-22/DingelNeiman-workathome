@@ -39,7 +39,7 @@ Expand-Archive -Path ./input/ilostat-2020-04-10.csv.zip -DestinationPath ./input
 Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\occ_onet_scores"
 
 New-Item -ItemType Directory -Name "input"
-#mkdir ../input
+#mkdir ../input --> this commands works in stata
 
 Copy-Item -Path "downloaddata/output/ONET_Work_Context.txt" -Destination "occ_onet_scores/input/"
 #copy into input folder: downloaddata/output/ONET_Work_Context.txt
@@ -51,19 +51,45 @@ Copy-Item -Path "downloaddata/output/ONET_Work_Activities.txt" -Destination "occ
 #copy into input folder: downloaddata/output/ONET_Work_Activities.txt
 
 #I still have problems running this code directly from here.
-#stata-se -e onet_characteristics.do
+#stata-se -e onet_characteristics.do #-> run manually
 
 == occ_manual_scores ==
-mkdir ../output
-stata-se -e load.do
+#Set the working directory:
+Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\occ_manual_scores"
+#mkdir ../output ->this works in STATA
+
+#stata-se -e load.do --> I run it manually from the code folder.
+
 == onet_to_BLS_crosswalk ==
-mkdir ../input
-mkdir ../output
-copy into input folder: occ_onet_scores/output/onet_teleworkable.dta
-copy into input folder: downloaddata/output/2010_to_SOC_Crosswalk.xlsx
-copy into input folder: downloaddata/output/oes_2019_hybrid_structure.xlsx
-copy into input folder: downloaddata/output/national_M2018_dl.xlsx
-stata-se -e crosswalk.do
+
+#In Stata code crosswalk.do
+#I set the working directory
+#mkdir ../input -->done in STATA
+#mkdir ../output
+
+Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome"
+
+Copy-Item -Path "occ_onet_scores/output/onet_teleworkable.dta" -Destination "onet_to_BLS_crosswalk\input\onet_teleworkable.dta"
+#copy into input folder: occ_onet_scores/output/onet_teleworkable.dta
+
+Copy-Item -Path "downloaddata/output/2010_to_SOC_Crosswalk.xlsx" -Destination "onet_to_BLS_crosswalk\input\2010_to_SOC_Crosswalk.xlsx"
+#copy into input folder: downloaddata/output/2010_to_SOC_Crosswalk.xlsx
+
+Copy-Item -Path "downloaddata/output/oes_2019_hybrid_structure.xlsx" -Destination "onet_to_BLS_crosswalk\input\oes_2019_hybrid_structure.xlsx"
+#copy into input folder: downloaddata/output/oes_2019_hybrid_structure.xlsx
+
+#Unzip. folders in D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output
+Expand-Archive -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output\oesm18in4.zip" -DestinationPath "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output"
+Expand-Archive -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output\oesm18nat.zip" -DestinationPath "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output"
+Expand-Archive -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output\oesm18ma.zip" -DestinationPath "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata\output"
+
+Copy-Item -Path "downloaddata/output/oesm18nat/national_M2018_dl.xlsx" -Destination "onet_to_BLS_crosswalk\input\national_M2018_dl.xlsx"
+#copy into input folder: downloaddata/output/national_M2018_dl.xlsx
+
+#stata-se -e crosswalk.do --> run manually
+
+#HERE WE GO.
+
 == national_measures ==
 mkdir ../input
 copy into input folder: downloaddata/output/national_M2018_dl.xlsx
