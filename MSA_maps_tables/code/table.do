@@ -1,14 +1,25 @@
+clear
+
+cd "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome\MSA_maps_tables"
+//mkdir ./input
+//mkdir ./output
+
+copy "../MSA_measures/output/MSA_2018_teleworkable_manual.dta" "./input/MSA_2018_teleworkable_manual.dta", replace
+copy "../MSA_measures/output/MSA_2018_teleworkable_onet.dta" "./input/MSA_2018_teleworkable_onet.dta", replace
+
 //Compute correlations with MSA traits
 //Produce table of highest and lowest cities; statement of range; only among 100 largest MSAs (by employment)
 
 local keepnum = 10
 local keepnumstr = "ten"
 
-use "../input/MSA_2018_teleworkable_onet.dta", clear
+use "./input/MSA_2018_teleworkable_onet.dta", clear
 clonevar cbsa = AREA
 recode cbsa (70900=12700) (71650=14460) (78100=44140) (79600 = 49340) (70750 = 12620) (71950 = 14860) (72400 = 15540) (73450 = 25540) (75700 = 35300) (76450 = 35980) (76750 = 38860) (77200 = 39300) (74650=30340) (74950=31700) (76600=38340) //Recode NECTAs to work with CBSA codes in ACS 2018 characteristics file
 drop if inlist(AREA,72850,73050,74500,75550,76900,78700) //NECTAs that do not appear in ACS CBSA geography
-merge 1:1 cbsa using "../input/CBSA_characteristics_5yr.dta", assert(using match) // keep(match) nogen
+
+//============PROBLEM==============================================================
+merge 1:1 cbsa using "./input/CBSA_characteristics_5yr.dta", assert(using match) // keep(match) nogen
 
 //Report correlations with MSA traits
 correlate teleworkable_emp frac_ba
@@ -23,7 +34,7 @@ local rho_own = string(r(rho),"%3.2f")
 correlate teleworkable_emp frac_white
 assert inrange(r(rho),-1.0,0.0)
 local rho_white = string(r(rho),"%3.2f")
-shell echo "Across all metropolitan areas, the share of jobs that can be performed at home is strongly positively correlated with median household income (`rho_income') and its share of residents who attained a college degree (`rho_ba') and negatively correlated with its home ownership rate (`rho_own') and its share of residents who are white (`rho_white').%" > ../output/MSA_correlates.tex
+shell echo "Across all metropolitan areas, the share of jobs that can be performed at home is strongly positively correlated with median household income (`rho_income') and its share of residents who attained a college degree (`rho_ba') and negatively correlated with its home ownership rate (`rho_own') and its share of residents who are white (`rho_white').%" > ./output/MSA_correlates.tex
 
 //Restrict attention to 100 largest MSAs (by employment) to produce top & bottom table
 tempvar tv0
@@ -53,15 +64,15 @@ local top_msa = AREA_NAME[1]
 qui summarize teleworkable_emp if row==2*`keepnum'
 local bot_num = string(100*`r(mean)',"%3.0f")
 local bot_msa = AREA_NAME[2*`keepnum']
-shell echo -n "from `bot_num' percent in `bot_msa' to `top_num' percent in `top_msa'%" > ../output/MSA_range.tex
+shell echo -n "from `bot_num' percent in `bot_msa' to `top_num' percent in `top_msa'%" > ./output/MSA_range.tex
 
 gen msa_name = AREA_NAME
 replace msa_name = "topnum" + AREA_NAME if row==1
 replace msa_name = "botnum" + AREA_NAME if row==(1+`keepnum')
 
-listtex msa_name tele_emp_str tele_wage_str frac_ba_str median_income_thousands frac_white_str frac_own_str using "../output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex", replace ///
+listtex msa_name tele_emp_str tele_wage_str frac_ba_str median_income_thousands frac_white_str frac_own_str using "./output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex", replace ///
 rstyle(tabular) head("\begin{tabular}{lcc|cccc} \toprule" " & \multicolumn{2}{c}{Share of jobs} & \multicolumn{4}{c}{Metropolitan characteristics} \\" " && Weighted & BA & Median & White & Owner \\" "& Unweighted & by wage & share & income & share & share \\" "\midrule") foot("\bottomrule \end{tabular}")
 
-shell sed -i.bak 's/^topnum/\\underline{\\textit{Top `keepnumstr'}}\\\\/' ../output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex
-shell sed -i.bak 's/^botnum/\\\\ \\underline{\\textit{Bottom `keepnumstr'}}\\\\/' ../output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex
-rm ../output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex.bak
+shell sed -i.bak 's/^topnum/\\underline{\\textit{Top `keepnumstr'}}\\\\/' ./output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex
+shell sed -i.bak 's/^botnum/\\\\ \\underline{\\textit{Bottom `keepnumstr'}}\\\\/' ./output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex
+rm ./output/MSA_telework_top`keepnum'bottom`keepnum'_table_char.tex.bak

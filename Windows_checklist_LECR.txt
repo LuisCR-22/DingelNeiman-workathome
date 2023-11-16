@@ -1,6 +1,6 @@
 == downloaddata ==
 # we establish the corresponding working cd, please note that the code is diferent when working with  Unix/Linux/MacOSX shell
-Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\downloaddata"
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome\downloaddata"
 
 New-Item -ItemType Directory -Name "output"
 
@@ -36,7 +36,7 @@ Expand-Archive -Path ./input/ilostat-2020-04-10.csv.zip -DestinationPath ./input
 == occ_onet_scores ==
 
 #Set the working directory:
-Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\occ_onet_scores"
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome\occ_onet_scores"
 
 New-Item -ItemType Directory -Name "input"
 #mkdir ../input --> this commands works in stata
@@ -55,7 +55,7 @@ Copy-Item -Path "downloaddata/output/ONET_Work_Activities.txt" -Destination "occ
 
 == occ_manual_scores ==
 #Set the working directory:
-Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome\occ_manual_scores"
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome"
 #mkdir ../output ->this works in STATA
 
 #stata-se -e load.do --> I run it manually from the code folder.
@@ -67,7 +67,7 @@ Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\Ding
 #mkdir ../input -->done in STATA
 #mkdir ../output
 
-Set-Location -Path "D:\Dropbox\GitHub\Felipe_Balcazar\Dingel_Neiman_project\DingelNeiman-workathome"
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome"
 
 Copy-Item -Path "occ_onet_scores/output/onet_teleworkable.dta" -Destination "onet_to_BLS_crosswalk\input\onet_teleworkable.dta"
 #copy into input folder: occ_onet_scores/output/onet_teleworkable.dta
@@ -88,45 +88,86 @@ Copy-Item -Path "downloaddata/output/oesm18nat/national_M2018_dl.xlsx" -Destinat
 
 #stata-se -e crosswalk.do --> run manually
 
-#HERE WE GO.
+
 
 == national_measures ==
-mkdir ../input
-copy into input folder: downloaddata/output/national_M2018_dl.xlsx
-copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
-copy into input folder: occ_manual_scores/output/Teleworkable_BNJDopinion.dta
-copy into input folder: downloaddata/output/natsector_M2018_dl.xlsx
+
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome"
+#mkdir ../input
+
+Copy-Item -Path "downloaddata/output/oesm18nat/national_M2018_dl.xlsx" -Destination "national_measures\input\national_M2018_dl.xlsx"
+#copy into input folder: downloaddata/output/national_M2018_dl.xlsx
+Copy-Item -Path "onet_to_BLS_crosswalk\output\onet_teleworkable_blscodes.dta" -Destination "national_measures\input\onet_teleworkable_blscodes.dta"
+#copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
+Copy-Item -Path "occ_manual_scores/output/Teleworkable_BNJDopinion.dta" -Destination "national_measures\input\Teleworkable_BNJDopinion.dta"
+#copy into input folder: occ_manual_scores/output/Teleworkable_BNJDopinion.dta
+Copy-Item -Path "downloaddata\output\oesm18in4\natsector_M2018_dl.xlsx" -Destination "national_measures\input\natsector_M2018_dl.xlsx"
+#copy into input folder: downloaddata/output/natsector_M2018_dl.xlsx
+
 stata-se -e headline_numbers.do
 stata-se -e naics.do
+stata-se -e naics_3digit.do
+
 == compare_measures ==
-mkdir ../input
-copy into input folder: downloaddata/output/national_M2018_dl.xlsx
+
+#mkdir ./input
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome"
+Copy-Item -Path "downloaddata\output\oesm18nat\national_M2018_dl.xlsx" -Destination "compare_measures\input\national_M2018_dl.xlsx"
+#copy into input folder: downloaddata/output/national_M2018_dl.xlsx
+
+Copy-Item -Path "onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta" -Destination "compare_measures\input\onet_teleworkable_blscodes.dta"
+#copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
+
+Copy-Item -Path "occ_manual_scores/output/Teleworkable_BNJDopinion.dta" -Destination "compare_measures\input\Teleworkable_BNJDopinion.dta"
+#copy into input folder: occ_manual_scores/output/Teleworkable_BNJDopinion.dta
+
+stata-se -e compare_methods.do
+
 == MSA_measures ==
-mkdir ../input
-copy into input folder: downloaddata/output/MSA_M2018_dl.xlsx
-copy into input folder: downloaddata/output/national_M2018_dl.xlsx
-copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
-copy into input folder: occ_manual_scores/output/Teleworkable_BNJDopinion.dta
+#mkdir ./input
+
+Set-Location -Path "D:\Dropbox\Paper unions and remote work\data_raw\Dingel_Neiman_project_LECR\DingelNeiman-workathome"
+
+Copy-Item -Path "downloaddata\output\oesm18ma\MSA_M2018_dl.xlsx" -Destination "MSA_measures\input\MSA_M2018_dl.xlsx"
+#copy into input folder: downloaddata/output/MSA_M2018_dl.xlsx
+Copy-Item -Path "downloaddata\output\oesm18nat\national_M2018_dl.xlsx" -Destination "MSA_measures\input\national_M2018_dl.xlsx"
+#copy into input folder: downloaddata/output/national_M2018_dl.xlsx
+Copy-Item -Path "onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta" -Destination "MSA_measures\input\onet_teleworkable_blscodes.dta"
+#copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
+Copy-Item -Path "occ_manual_scores/output/Teleworkable_BNJDopinion.dta" -Destination "MSA_measures\input\Teleworkable_BNJDopinion.dta"
+#copy into input folder: occ_manual_scores/output/Teleworkable_BNJDopinion.dta
+
 stata-se -e produce_measures.do
-== MSA_maps_tables ==
+
+============================================================================================================
+== MSA_maps_tables == #Pending, I was not able to run these codes because we lack one of the input files.
+
 mkdir ../input
 mkdir ../output
-copy into input folder: MSA_measures/output/MSA_2018_teleworkable_manual.dta
-copy into input folder: MSA_measures/output/MSA_2018_teleworkable_onet.dta
+#copy into input folder: MSA_measures/output/MSA_2018_teleworkable_manual.dta #I did this directly in the table.do code.
+#copy into input folder: MSA_measures/output/MSA_2018_teleworkable_onet.dta #I did this directly in the table.do code.
 stata-se -e table.do
 stata-se -e maps.do
+
+===========================================================================================================
+
 == country_measures ==
-mkdir ../input
-mkdir ../output
-copy into input folder: downloaddata/output/ilostat-2020-04-10.csv
-copy into input folder: downloaddata/output/ISCO_SOC_Crosswalk.xls
-copy into input folder: downloaddata/output/national_M2018_dl.xlsx
-copy into input folder: downloaddata/output/oes_2019_hybrid_structure.xlsx
-copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
-copy into input folder: downloaddata/output/WEO_Data.xls
-stata-se -e country_level_measures.do
+#mkdir ../input
+#mkdir ../output
+
+#The following was coded in stata
+#copy into input folder: downloaddata/output/ilostat-2020-04-10.csv
+#copy into input folder: downloaddata/output/ISCO_SOC_Crosswalk.xls
+#copy into input folder: downloaddata/output/national_M2018_dl.xlsx
+#copy into input folder: downloaddata/output/oes_2019_hybrid_structure.xlsx
+#copy into input folder: onet_to_BLS_crosswalk/output/onet_teleworkable_blscodes.dta
+#copy into input folder: downloaddata/output/WEO_Data.xls --> I was not able to download this dataset. 
+
+stata-se -e country_level_measures.do #Nevertheless the code runs without WEO data.
+
 == country_correlates ==
-mkdir ../input
-copy into input folder: country_measures/output/country_isco08_telework.dta
-copy into input folder: downloaddata/output/WEO_Data.xls
-stata-se -e correlates.do
+#mkdir ../input
+
+#copy into input folder: country_measures/output/country_isco08_telework.dta
+#copy into input folder: downloaddata/output/WEO_Data.xls --> I was not able to download this dataset. 
+stata-se -e correlates.do #I WAS NOT ABLE TO RUN THIS.
